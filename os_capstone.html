@@ -1,0 +1,3730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>OS Resource Manager</title>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background: #f5f7fb;
+
+    color: #172033;
+
+    min-height: 100vh;
+}
+
+button {
+    font-family: inherit;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    height: 78px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e6eaf0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 32px;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+}
+
+.brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+.brand-logo {
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 7px 18px rgba(
+            37,
+            99,
+            235,
+            0.22
+        );
+}
+
+.brand-text h1 {
+    font-size: 18px;
+
+    color: #111827;
+
+    font-weight: 750;
+}
+
+.brand-text p {
+    font-size: 11px;
+
+    color: #7b8495;
+
+    margin-top: 2px;
+}
+
+.header-status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #526071;
+
+    font-size: 12px;
+}
+
+.status-dot {
+    width: 8px;
+
+    height: 8px;
+
+    background: #22c55e;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            34,
+            197,
+            94,
+            0.12
+        );
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+========================================================= */
+
+.layout {
+    display: flex;
+
+    min-height:
+        calc(100vh - 78px);
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 250px;
+
+    background: #ffffff;
+
+    border-right: 1px solid #e6eaf0;
+
+    padding: 25px 16px;
+
+    flex-shrink: 0;
+}
+
+.sidebar-label {
+    font-size: 10px;
+
+    font-weight: 750;
+
+    letter-spacing: 1.2px;
+
+    color: #9aa3b2;
+
+    padding: 0 12px;
+
+    margin-bottom: 12px;
+}
+
+.nav-button {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #596579;
+
+    padding: 12px 13px;
+
+    border-radius: 9px;
+
+    margin-bottom: 5px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    text-align: left;
+
+    transition:
+        background 0.2s,
+        color 0.2s,
+        transform 0.2s;
+}
+
+.nav-button:hover {
+    background: #f1f5ff;
+
+    color: #2563eb;
+
+    transform: translateX(2px);
+}
+
+.nav-button.active {
+    background: #edf3ff;
+
+    color: #2563eb;
+
+    font-weight: 700;
+
+    box-shadow:
+        inset 3px 0 0 #2563eb;
+}
+
+.nav-icon {
+    width: 28px;
+
+    text-align: center;
+
+    font-size: 16px;
+}
+
+.sidebar-bottom {
+    margin-top: 35px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #f7f9fc;
+
+    border: 1px solid #e8edf4;
+}
+
+.sidebar-bottom-title {
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #526071;
+
+    margin-bottom: 7px;
+}
+
+.sidebar-bottom-text {
+    font-size: 10px;
+
+    color: #8993a3;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content {
+    flex: 1;
+
+    padding: 32px;
+
+    max-width: 1600px;
+
+    margin: auto;
+
+    width: 100%;
+}
+
+.page-header {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+.page-title {
+    font-size: 26px;
+
+    color: #111827;
+
+    font-weight: 800;
+}
+
+.page-subtitle {
+    color: #7a8495;
+
+    font-size: 13px;
+
+    margin-top: 7px;
+}
+
+.date-badge {
+    background: white;
+
+    border: 1px solid #e3e8ef;
+
+    border-radius: 8px;
+
+    padding: 9px 13px;
+
+    color: #667085;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   STAT CARDS
+========================================================= */
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 17px;
+
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: white;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 12px;
+
+    padding: 19px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(
+            15,
+            23,
+            42,
+            0.03
+        );
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 60px;
+
+    height: 60px;
+
+    border-radius: 50%;
+
+    right: -22px;
+
+    top: -22px;
+
+    background: #f0f5ff;
+}
+
+.stat-top {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+.stat-label {
+    color: #7b8495;
+
+    font-size: 11px;
+
+    font-weight: 650;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+}
+
+.stat-icon {
+    width: 35px;
+
+    height: 35px;
+
+    background: #f0f5ff;
+
+    color: #2563eb;
+
+    border-radius: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 16px;
+}
+
+.stat-number {
+    margin-top: 15px;
+
+    font-size: 25px;
+
+    font-weight: 800;
+
+    color: #111827;
+}
+
+.stat-description {
+    margin-top: 4px;
+
+    color: #9aa3b2;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.card {
+    background: #ffffff;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(
+            15,
+            23,
+            42,
+            0.03
+        );
+
+    margin-bottom: 20px;
+
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 19px 21px;
+
+    border-bottom: 1px solid #edf0f4;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.card-title {
+    font-size: 15px;
+
+    font-weight: 750;
+
+    color: #172033;
+}
+
+.card-subtitle {
+    font-size: 11px;
+
+    color: #8a94a5;
+
+    margin-top: 4px;
+}
+
+.card-body {
+    padding: 21px;
+}
+
+
+/* =========================================================
+   TWO COLUMN
+========================================================= */
+
+.two-column {
+    display: grid;
+
+    grid-template-columns:
+        1.4fr 0.8fr;
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f7f9fc;
+}
+
+th {
+    text-align: left;
+
+    padding: 12px 14px;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+    color: #7a8495;
+
+    font-weight: 750;
+
+    border-bottom: 1px solid #e8edf3;
+}
+
+td {
+    padding: 13px 14px;
+
+    font-size: 12px;
+
+    color: #475467;
+
+    border-bottom: 1px solid #eef1f5;
+}
+
+tbody tr:hover {
+    background: #fafcff;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   ALGORITHM BADGES
+========================================================= */
+
+.badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+.badge-blue {
+    color: #2563eb;
+
+    background: #edf3ff;
+}
+
+.badge-green {
+    color: #15803d;
+
+    background: #ecfdf3;
+}
+
+.badge-purple {
+    color: #7c3aed;
+
+    background: #f3efff;
+}
+
+.badge-orange {
+    color: #c2410c;
+
+    background: #fff7ed;
+}
+
+
+/* =========================================================
+   METRIC
+========================================================= */
+
+.metric {
+    margin-bottom: 20px;
+}
+
+.metric:last-child {
+    margin-bottom: 0;
+}
+
+.metric-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+}
+
+.metric-name {
+    color: #526071;
+
+    font-size: 11px;
+
+    font-weight: 650;
+}
+
+.metric-value {
+    color: #172033;
+
+    font-size: 11px;
+
+    font-weight: 750;
+}
+
+.progress {
+    width: 100%;
+
+    height: 7px;
+
+    background: #edf0f4;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #6366f1
+        );
+}
+
+
+/* =========================================================
+   TERMINAL
+========================================================= */
+
+.terminal {
+    background: #101828;
+
+    color: #b7f7c7;
+
+    border-radius: 9px;
+
+    padding: 20px;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+
+    min-height: 220px;
+
+    border: 1px solid #1e293b;
+
+    box-shadow:
+        inset 0 0 20px
+        rgba(
+            0,
+            0,
+            0,
+            0.12
+        );
+}
+
+.terminal-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 14px;
+
+    color: #94a3b8;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 10px;
+}
+
+.terminal-dot {
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.primary-button {
+    border: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    color: white;
+
+    border-radius: 7px;
+
+    padding: 10px 15px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 15px
+        rgba(
+            37,
+            99,
+            235,
+            0.18
+        );
+
+    transition:
+        transform 0.15s,
+        box-shadow 0.15s;
+}
+
+.primary-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 18px
+        rgba(
+            37,
+            99,
+            235,
+            0.25
+        );
+}
+
+
+/* =========================================================
+   SAFE STATE
+========================================================= */
+
+.safe-box {
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
+    border-radius: 10px;
+
+    padding: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+.safe-icon {
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 18px;
+}
+
+.safe-title {
+    color: #166534;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+.safe-text {
+    color: #4d7c5b;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   REPORT CARDS
+========================================================= */
+
+.report-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+}
+
+.report-card {
+    border: 1px solid #e6eaf0;
+
+    border-radius: 10px;
+
+    padding: 17px;
+
+    background: #ffffff;
+}
+
+.report-card h4 {
+    font-size: 12px;
+
+    color: #526071;
+
+    margin-bottom: 12px;
+}
+
+.report-number {
+    font-size: 23px;
+
+    font-weight: 800;
+
+    color: #172033;
+}
+
+.report-label {
+    color: #9aa3b2;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    text-align: center;
+
+    padding: 20px;
+
+    color: #9aa3b2;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .report-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 750px) {
+
+    .header {
+        padding: 0 16px;
+    }
+
+    .header-status {
+        display: none;
+    }
+
+    .layout {
+        display: block;
+    }
+
+    .sidebar {
+        width: 100%;
+
+        border-right: none;
+
+        border-bottom: 1px solid #e6eaf0;
+
+        padding: 12px;
+    }
+
+    .sidebar-label {
+        display: none;
+    }
+
+    .nav-button {
+        display: inline-flex;
+
+        width: auto;
+
+        margin-right: 4px;
+
+        margin-bottom: 0;
+    }
+
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .content {
+        padding: 20px 15px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .report-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        display: block;
+    }
+
+    .date-badge {
+        display: inline-block;
+
+        margin-top: 12px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+======================================================= -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            OS
+        </div>
+
+        <div class="brand-text">
+
+            <h1>
+                OS Resource Manager
+            </h1>
+
+            <p>
+                Integrated Operating System Resource Management
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="header-status">
+
+        <span class="status-dot"></span>
+
+        System Online
+
+    </div>
+
+</header>
+
+
+
+<!-- ======================================================
+     MAIN LAYOUT
+======================================================= -->
+
+<div class="layout">
+
+
+<!-- ======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-label">
+        RESOURCE MANAGEMENT
+    </div>
+
+
+    <button
+        class="nav-button active"
+        onclick="showDashboard(this)">
+
+        <span class="nav-icon">
+            ◉
+        </span>
+
+        Dashboard
+
+    </button>
+
+
+    <button
+        class="nav-button"
+        onclick="showCPU(this)">
+
+        <span class="nav-icon">
+            ⚙
+        </span>
+
+        CPU Scheduling
+
+    </button>
+
+
+    <button
+        class="nav-button"
+        onclick="showMemory(this)">
+
+        <span class="nav-icon">
+            ▣
+        </span>
+
+        Memory Management
+
+    </button>
+
+
+    <button
+        class="nav-button"
+        onclick="showDeadlock(this)">
+
+        <span class="nav-icon">
+            ◈
+        </span>
+
+        Deadlock Detection
+
+    </button>
+
+
+    <button
+        class="nav-button"
+        onclick="showDisk(this)">
+
+        <span class="nav-icon">
+            ▰
+        </span>
+
+        Disk Scheduling
+
+    </button>
+
+
+    <button
+        class="nav-button"
+        onclick="showBash(this)">
+
+        <span class="nav-icon">
+            ▪
+        </span>
+
+        Bash System Monitor
+
+    </button>
+
+
+    <button
+        class="nav-button"
+        onclick="showReports(this)">
+
+        <span class="nav-icon">
+            ◫
+        </span>
+
+        Analysis Reports
+
+    </button>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="sidebar-bottom-title">
+            PROJECT STATUS
+        </div>
+
+        <div class="sidebar-bottom-text">
+            All major resource-management
+            modules are available in this
+            integrated application.
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ======================================================
+     CONTENT
+======================================================= -->
+
+<main class="content" id="content">
+
+
+<!-- ======================================================
+     DASHBOARD
+======================================================= -->
+
+<div class="page-header">
+
+    <div>
+
+        <div class="page-title">
+            System Dashboard
+        </div>
+
+        <div class="page-subtitle">
+            Overview of CPU, memory, deadlock,
+            disk and monitoring modules
+        </div>
+
+    </div>
+
+
+    <div class="date-badge">
+        OS RESOURCE MANAGER
+    </div>
+
+</div>
+
+
+
+<!-- STAT CARDS -->
+
+<div class="stats">
+
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div class="stat-label">
+                CPU Algorithms
+            </div>
+
+            <div class="stat-icon">
+                ⚙
+            </div>
+
+        </div>
+
+        <div class="stat-number">
+            3
+        </div>
+
+        <div class="stat-description">
+            FCFS · SJF · Round Robin
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div class="stat-label">
+                Memory Algorithms
+            </div>
+
+            <div class="stat-icon">
+                ▣
+            </div>
+
+        </div>
+
+        <div class="stat-number">
+            3
+        </div>
+
+        <div class="stat-description">
+            First Fit · Best Fit · Worst Fit
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div class="stat-label">
+                Deadlock
+            </div>
+
+            <div class="stat-icon">
+                ◈
+            </div>
+
+        </div>
+
+        <div class="stat-number">
+            SAFE
+        </div>
+
+        <div class="stat-description">
+            Banker's Algorithm
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div class="stat-label">
+                Disk Algorithms
+            </div>
+
+            <div class="stat-icon">
+                ▰
+            </div>
+
+        </div>
+
+        <div class="stat-number">
+            2
+        </div>
+
+        <div class="stat-description">
+            FCFS · SSTF
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ======================================================
+     CPU SUMMARY
+======================================================= -->
+
+<div class="two-column">
+
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <div class="card-title">
+                CPU Scheduling Analysis
+            </div>
+
+            <div class="card-subtitle">
+                Performance comparison of scheduling algorithms
+            </div>
+
+        </div>
+
+        <button
+            class="primary-button"
+            onclick="showCPU()">
+
+            View Details
+
+        </button>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>
+                    Algorithm
+                </th>
+
+                <th>
+                    Average Waiting Time
+                </th>
+
+                <th>
+                    Average Turnaround Time
+                </th>
+
+                <th>
+                    Performance
+                </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <tr>
+
+                <td>
+                    <span class="badge badge-blue">
+                        FCFS
+                    </span>
+                </td>
+
+                <td>
+                    <strong>
+                        13.40
+                    </strong>
+                </td>
+
+                <td>
+                    <strong>
+                        19.00
+                    </strong>
+                </td>
+
+                <td>
+                    Moderate
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    <span class="badge badge-green">
+                        SJF
+                    </span>
+                </td>
+
+                <td>
+                    <strong>
+                        7.60
+                    </strong>
+                </td>
+
+                <td>
+                    <strong>
+                        13.20
+                    </strong>
+                </td>
+
+                <td>
+                    Best
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    <span class="badge badge-purple">
+                        Round Robin
+                    </span>
+                </td>
+
+                <td>
+                    <strong>
+                        16.00
+                    </strong>
+                </td>
+
+                <td>
+                    <strong>
+                        21.60
+                    </strong>
+                </td>
+
+                <td>
+                    Fair / Responsive
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- PERFORMANCE CARD -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <div class="card-title">
+                CPU Metrics
+            </div>
+
+            <div class="card-subtitle">
+                Lower values indicate better efficiency
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body">
+
+
+        <div class="metric">
+
+            <div class="metric-header">
+
+                <span class="metric-name">
+                    FCFS Waiting Time
+                </span>
+
+                <span class="metric-value">
+                    13.40
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width: 67%">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-header">
+
+                <span class="metric-name">
+                    SJF Waiting Time
+                </span>
+
+                <span class="metric-value">
+                    7.60
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width: 38%">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-header">
+
+                <span class="metric-name">
+                    Round Robin Waiting Time
+                </span>
+
+                <span class="metric-value">
+                    16.00
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width: 80%">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+
+<!-- ======================================================
+     MODULE OVERVIEW
+======================================================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <div class="card-title">
+                Resource Management Modules
+            </div>
+
+            <div class="card-subtitle">
+                Integrated components of the application
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>
+                    Module
+                </th>
+
+                <th>
+                    Algorithms / Function
+                </th>
+
+                <th>
+                    Status
+                </th>
+
+                <th>
+                    Purpose
+                </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <tr>
+
+                <td>
+                    CPU Scheduling
+                </td>
+
+                <td>
+                    FCFS, SJF, Round Robin
+                </td>
+
+                <td>
+                    <span class="badge badge-green">
+                        Implemented
+                    </span>
+                </td>
+
+                <td>
+                    CPU process allocation
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Memory Management
+                </td>
+
+                <td>
+                    First Fit, Best Fit, Worst Fit
+                </td>
+
+                <td>
+                    <span class="badge badge-green">
+                        Implemented
+                    </span>
+                </td>
+
+                <td>
+                    Memory block allocation
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Deadlock Detection
+                </td>
+
+                <td>
+                    Banker's Algorithm
+                </td>
+
+                <td>
+                    <span class="badge badge-green">
+                        Implemented
+                    </span>
+                </td>
+
+                <td>
+                    Safe-state detection
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Disk Scheduling
+                </td>
+
+                <td>
+                    FCFS, SSTF
+                </td>
+
+                <td>
+                    <span class="badge badge-green">
+                        Implemented
+                    </span>
+                </td>
+
+                <td>
+                    Disk head optimization
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Bash Monitor
+                </td>
+
+                <td>
+                    System Information
+                </td>
+
+                <td>
+                    <span class="badge badge-green">
+                        Implemented
+                    </span>
+                </td>
+
+                <td>
+                    System monitoring
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Reporting
+                </td>
+
+                <td>
+                    Analysis & Comparison
+                </td>
+
+                <td>
+                    <span class="badge badge-green">
+                        Implemented
+                    </span>
+                </td>
+
+                <td>
+                    Performance evaluation
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
+<div class="footer">
+
+    OS Resource Manager · Integrated CPU, Memory,
+    Deadlock, Disk and Bash Resource Manager
+
+</div>
+
+
+</main>
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function activateButton(button) {
+
+    document
+        .querySelectorAll(".nav-button")
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+    if (button) {
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function showDashboard(button) {
+
+    activateButton(button);
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-title">
+                System Dashboard
+            </div>
+
+            <div class="page-subtitle">
+                Overview of CPU, memory, deadlock,
+                disk and monitoring modules
+            </div>
+
+        </div>
+
+        <div class="date-badge">
+            OS RESOURCE MANAGER
+        </div>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    CPU Algorithms
+                </div>
+
+                <div class="stat-icon">
+                    ⚙
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                3
+            </div>
+
+            <div class="stat-description">
+                FCFS · SJF · Round Robin
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Memory Algorithms
+                </div>
+
+                <div class="stat-icon">
+                    ▣
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                3
+            </div>
+
+            <div class="stat-description">
+                First Fit · Best Fit · Worst Fit
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Deadlock
+                </div>
+
+                <div class="stat-icon">
+                    ◈
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                SAFE
+            </div>
+
+            <div class="stat-description">
+                Banker's Algorithm
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Disk Algorithms
+                </div>
+
+                <div class="stat-icon">
+                    ▰
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                2
+            </div>
+
+            <div class="stat-description">
+                FCFS · SSTF
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="two-column">
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <div class="card-title">
+                        CPU Scheduling Analysis
+                    </div>
+
+                    <div class="card-subtitle">
+                        Performance comparison
+                    </div>
+
+                </div>
+
+                <button
+                    class="primary-button"
+                    onclick="showCPU()">
+
+                    View Details
+
+                </button>
+
+            </div>
+
+
+            <div class="card-body">
+
+                ${cpuTable()}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <div class="card-title">
+                        System Status
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="safe-box">
+
+                    <div class="safe-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <div class="safe-title">
+                            System Operational
+                        </div>
+
+                        <div class="safe-text">
+                            All resource modules are available.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Resource Management Modules
+                </div>
+
+                <div class="card-subtitle">
+                    Integrated system components
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            ${moduleTable()}
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        OS Resource Manager · Integrated CPU,
+        Memory, Deadlock, Disk and Bash Resource Manager
+    </div>
+    `;
+}
+
+
+/* =========================================================
+   CPU TABLE
+========================================================= */
+
+function cpuTable() {
+
+    return `
+
+    <div class="table-wrapper">
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>
+                Algorithm
+            </th>
+
+            <th>
+                Average Waiting Time
+            </th>
+
+            <th>
+                Average Turnaround Time
+            </th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+
+            <td>
+                <span class="badge badge-blue">
+                    FCFS
+                </span>
+            </td>
+
+            <td>
+                <strong>
+                    13.40
+                </strong>
+            </td>
+
+            <td>
+                <strong>
+                    19.00
+                </strong>
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <span class="badge badge-green">
+                    SJF
+                </span>
+            </td>
+
+            <td>
+                <strong>
+                    7.60
+                </strong>
+            </td>
+
+            <td>
+                <strong>
+                    13.20
+                </strong>
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <span class="badge badge-purple">
+                    Round Robin
+                </span>
+            </td>
+
+            <td>
+                <strong>
+                    16.00
+                </strong>
+            </td>
+
+            <td>
+                <strong>
+                    21.60
+                </strong>
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    </div>
+    `;
+}
+
+
+/* =========================================================
+   MODULE TABLE
+========================================================= */
+
+function moduleTable() {
+
+    return `
+
+    <div class="table-wrapper">
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>
+                Module
+            </th>
+
+            <th>
+                Algorithms
+            </th>
+
+            <th>
+                Status
+            </th>
+
+            <th>
+                Purpose
+            </th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+
+            <td>
+                CPU Scheduling
+            </td>
+
+            <td>
+                FCFS, SJF, Round Robin
+            </td>
+
+            <td>
+                <span class="badge badge-green">
+                    Implemented
+                </span>
+            </td>
+
+            <td>
+                Process scheduling
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Memory Management
+            </td>
+
+            <td>
+                First Fit, Best Fit, Worst Fit
+            </td>
+
+            <td>
+                <span class="badge badge-green">
+                    Implemented
+                </span>
+            </td>
+
+            <td>
+                Memory allocation
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Deadlock Detection
+            </td>
+
+            <td>
+                Banker's Algorithm
+            </td>
+
+            <td>
+                <span class="badge badge-green">
+                    Implemented
+                </span>
+            </td>
+
+            <td>
+                Safe-state detection
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Disk Scheduling
+            </td>
+
+            <td>
+                FCFS, SSTF
+            </td>
+
+            <td>
+                <span class="badge badge-green">
+                    Implemented
+                </span>
+            </td>
+
+            <td>
+                Disk head optimization
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Bash Monitor
+            </td>
+
+            <td>
+                System Information
+            </td>
+
+            <td>
+                <span class="badge badge-green">
+                    Implemented
+                </span>
+            </td>
+
+            <td>
+                System monitoring
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    </div>
+    `;
+}
+
+
+/* =========================================================
+   CPU SCHEDULING
+========================================================= */
+
+function showCPU(button) {
+
+    activateButton(button);
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-title">
+                CPU Scheduling
+            </div>
+
+            <div class="page-subtitle">
+                Comparison of CPU scheduling algorithms
+            </div>
+
+        </div>
+
+        <div class="date-badge">
+            PERFORMANCE ANALYSIS
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Algorithm Comparison
+                </div>
+
+                <div class="card-subtitle">
+                    Average performance metrics
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            ${cpuTable()}
+
+        </div>
+
+    </div>
+
+
+    <div class="report-grid">
+
+        <div class="report-card">
+
+            <h4>
+                FCFS
+            </h4>
+
+            <div class="report-number">
+                13.40
+            </div>
+
+            <div class="report-label">
+                Average Waiting Time
+            </div>
+
+            <br>
+
+            <div class="report-number">
+                19.00
+            </div>
+
+            <div class="report-label">
+                Average Turnaround Time
+            </div>
+
+        </div>
+
+
+        <div class="report-card">
+
+            <h4>
+                SJF
+            </h4>
+
+            <div class="report-number">
+                7.60
+            </div>
+
+            <div class="report-label">
+                Average Waiting Time
+            </div>
+
+            <br>
+
+            <div class="report-number">
+                13.20
+            </div>
+
+            <div class="report-label">
+                Average Turnaround Time
+            </div>
+
+        </div>
+
+
+        <div class="report-card">
+
+            <h4>
+                Round Robin
+            </h4>
+
+            <div class="report-number">
+                16.00
+            </div>
+
+            <div class="report-label">
+                Average Waiting Time
+            </div>
+
+            <br>
+
+            <div class="report-number">
+                21.60
+            </div>
+
+            <div class="report-label">
+                Average Turnaround Time
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Technical Observation
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <p style="
+                color:#526071;
+                font-size:12px;
+                line-height:1.8;
+            ">
+
+                The given analysis shows that SJF has the
+                lowest average waiting time and average
+                turnaround time among the three algorithms
+                for the evaluated dataset. FCFS provides
+                simple scheduling based on arrival order,
+                while Round Robin provides fair CPU sharing
+                through time slicing.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        CPU Scheduling · FCFS · SJF · Round Robin
+    </div>
+    `;
+}
+
+
+/* =========================================================
+   MEMORY MANAGEMENT
+========================================================= */
+
+function showMemory(button) {
+
+    activateButton(button);
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-title">
+                Memory Management
+            </div>
+
+            <div class="page-subtitle">
+                Dynamic memory allocation algorithms
+            </div>
+
+        </div>
+
+        <div class="date-badge">
+            MEMORY ALLOCATION
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Memory Allocation Algorithms
+                </div>
+
+                <div class="card-subtitle">
+                    Comparison of allocation strategies
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Algorithm
+                    </th>
+
+                    <th>
+                        Strategy
+                    </th>
+
+                    <th>
+                        Main Advantage
+                    </th>
+
+                    <th>
+                        Consideration
+                    </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr>
+
+                    <td>
+                        <span class="badge badge-blue">
+                            First Fit
+                        </span>
+                    </td>
+
+                    <td>
+                        First suitable block
+                    </td>
+
+                    <td>
+                        Fast allocation
+                    </td>
+
+                    <td>
+                        May create external fragmentation
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        <span class="badge badge-green">
+                            Best Fit
+                        </span>
+                    </td>
+
+                    <td>
+                        Smallest suitable block
+                    </td>
+
+                    <td>
+                        Reduces leftover space
+                    </td>
+
+                    <td>
+                        Can require more searching
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        <span class="badge badge-purple">
+                            Worst Fit
+                        </span>
+                    </td>
+
+                    <td>
+                        Largest suitable block
+                    </td>
+
+                    <td>
+                        Leaves larger remaining blocks
+                    </td>
+
+                    <td>
+                        May waste large blocks
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="two-column">
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <div class="card-title">
+                        Sample Memory Blocks
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="terminal">
+Memory Blocks
+
+Block 1 : 100 KB
+Block 2 : 500 KB
+Block 3 : 200 KB
+Block 4 : 300 KB
+Block 5 : 600 KB
+
+Processes
+
+P1 : 212 KB
+P2 : 417 KB
+P3 : 112 KB
+P4 : 426 KB
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <div class="card-title">
+                        Module Status
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="safe-box">
+
+                    <div class="safe-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <div class="safe-title">
+                            Memory Module Ready
+                        </div>
+
+                        <div class="safe-text">
+                            Allocation algorithms are available.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Memory Management · First Fit · Best Fit · Worst Fit
+    </div>
+
+    `;
+}
+
+
+/* =========================================================
+   DEADLOCK
+========================================================= */
+
+function showDeadlock(button) {
+
+    activateButton(button);
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-title">
+                Deadlock Detection
+            </div>
+
+            <div class="page-subtitle">
+                Banker's Algorithm and safe-state analysis
+            </div>
+
+        </div>
+
+        <div class="date-badge">
+            BANKER'S ALGORITHM
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="safe-box">
+
+                <div class="safe-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <div class="safe-title">
+                        SYSTEM STATE: SAFE
+                    </div>
+
+                    <div class="safe-text">
+                        The current resource allocation
+                        can proceed without deadlock.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Safe Sequence
+                </div>
+
+                <div class="card-subtitle">
+                    Order in which processes can complete safely
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="terminal">
+
+Safe Sequence
+
+P1 → P3 → P4 → P0 → P2
+
+Status: SAFE
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Resource Allocation
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Process
+                    </th>
+
+                    <th>
+                        Allocation
+                    </th>
+
+                    <th>
+                        Maximum
+                    </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr>
+
+                    <td>
+                        P0
+                    </td>
+
+                    <td>
+                        0 1 0
+                    </td>
+
+                    <td>
+                        7 5 3
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        P1
+                    </td>
+
+                    <td>
+                        2 0 0
+                    </td>
+
+                    <td>
+                        3 2 2
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        P2
+                    </td>
+
+                    <td>
+                        3 0 2
+                    </td>
+
+                    <td>
+                        9 0 2
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        P3
+                    </td>
+
+                    <td>
+                        2 1 1
+                    </td>
+
+                    <td>
+                        2 2 2
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        P4
+                    </td>
+
+                    <td>
+                        0 0 2
+                    </td>
+
+                    <td>
+                        4 3 3
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Deadlock Detection · Banker's Algorithm
+    </div>
+
+    `;
+}
+
+
+/* =========================================================
+   DISK
+========================================================= */
+
+function showDisk(button) {
+
+    activateButton(button);
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-title">
+                Disk Scheduling
+            </div>
+
+            <div class="page-subtitle">
+                Disk request scheduling and head movement
+            </div>
+
+        </div>
+
+        <div class="date-badge">
+            DISK MANAGEMENT
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Disk Request Queue
+                </div>
+
+                <div class="card-subtitle">
+                    Sample input for disk scheduling
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="terminal">
+
+Request Queue
+
+98 → 183 → 37 → 122 → 14 → 124 → 65 → 67
+
+Initial Head Position : 53
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Disk Algorithm Comparison
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Algorithm
+                    </th>
+
+                    <th>
+                        Description
+                    </th>
+
+                    <th>
+                        Result
+                    </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr>
+
+                    <td>
+                        <span class="badge badge-blue">
+                            FCFS
+                        </span>
+                    </td>
+
+                    <td>
+                        Services requests in arrival order
+                    </td>
+
+                    <td>
+                        Head movement calculated
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        <span class="badge badge-green">
+                            SSTF
+                        </span>
+                    </td>
+
+                    <td>
+                        Selects nearest request
+                    </td>
+
+                    <td>
+                        Reduced movement
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Disk Scheduling · FCFS · SSTF
+    </div>
+
+    `;
+}
+
+
+/* =========================================================
+   BASH MONITOR
+========================================================= */
+
+function showBash(button) {
+
+    activateButton(button);
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-title">
+                Bash System Monitor
+            </div>
+
+            <div class="page-subtitle">
+                Integrated system-monitoring module
+            </div>
+
+        </div>
+
+        <div class="date-badge">
+            BASH MONITOR
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    System Information
+                </div>
+
+                <div class="card-subtitle">
+                    Bash-style monitoring output
+                </div>
+
+            </div>
+
+
+            <button
+                class="primary-button"
+                onclick="runBashMonitor()">
+
+                Run Monitor
+
+            </button>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div
+                id="bashOutput"
+                class="terminal">
+
+========================================
+       BASH SYSTEM MONITOR
+========================================
+
+System Information
+------------------
+Click "Run Monitor" to display
+system information.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Monitoring Components
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Component
+                    </th>
+
+                    <th>
+                        Information
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr>
+
+                    <td>
+                        Operating System
+                    </td>
+
+                    <td>
+                        Browser platform information
+                    </td>
+
+                    <td>
+                        Available
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        CPU
+                    </td>
+
+                    <td>
+                        Logical processor count
+                    </td>
+
+                    <td>
+                        Available
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Memory
+                    </td>
+
+                    <td>
+                        Device memory when supported
+                    </td>
+
+                    <td>
+                        Available
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Disk
+                    </td>
+
+                    <td>
+                        Browser security restricted
+                    </td>
+
+                    <td>
+                        Limited
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Bash System Monitor · Integrated Monitoring
+    </div>
+
+    `;
+}
+
+
+/* =========================================================
+   RUN BASH MONITOR
+========================================================= */
+
+function runBashMonitor() {
+
+    const output =
+
+`========================================
+       BASH SYSTEM MONITOR
+========================================
+
+System Information
+------------------
+Operating System:
+${navigator.platform}
+
+Browser:
+${navigator.userAgent}
+
+Architecture:
+Browser Environment
+
+Memory Information
+------------------
+Device Memory:
+${
+    navigator.deviceMemory
+        ? navigator.deviceMemory + " GB"
+        : "Not available"
+}
+
+CPU Information
+---------------
+Logical CPU Cores:
+${
+    navigator.hardwareConcurrency
+        ? navigator.hardwareConcurrency
+        : "Not available"
+}
+
+Disk Information
+----------------
+Browser security prevents
+direct disk inspection.
+
+Network Status
+--------------
+${
+    navigator.onLine
+        ? "Online"
+        : "Offline"
+}
+
+----------------------------------------
+MONITOR STATUS: RUNNING
+----------------------------------------`;
+
+    document.getElementById(
+        "bashOutput"
+    ).textContent =
+        output;
+}
+
+
+/* =========================================================
+   REPORTS
+========================================================= */
+
+function showReports(button) {
+
+    activateButton(button);
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-title">
+                Analysis Reports
+            </div>
+
+            <div class="page-subtitle">
+                Performance comparison and technical observations
+            </div>
+
+        </div>
+
+        <div class="date-badge">
+            ANALYTICAL RESULTS
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    CPU Scheduling Results
+                </div>
+
+                <div class="card-subtitle">
+                    Given dataset results
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            ${cpuTable()}
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Performance Summary
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="report-grid">
+
+                <div class="report-card">
+
+                    <h4>
+                        Best Waiting Time
+                    </h4>
+
+                    <div class="report-number">
+                        7.60
+                    </div>
+
+                    <div class="report-label">
+                        SJF
+                    </div>
+
+                </div>
+
+
+                <div class="report-card">
+
+                    <h4>
+                        Best Turnaround Time
+                    </h4>
+
+                    <div class="report-number">
+                        13.20
+                    </div>
+
+                    <div class="report-label">
+                        SJF
+                    </div>
+
+                </div>
+
+
+                <div class="report-card">
+
+                    <h4>
+                        FCFS Turnaround
+                    </h4>
+
+                    <div class="report-number">
+                        19.00
+                    </div>
+
+                    <div class="report-label">
+                        Average Turnaround Time
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <div class="card-title">
+                    Technical Observations
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="safe-box">
+
+                <div class="safe-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <div class="safe-title">
+                        SJF gives the lowest average values
+                    </div>
+
+                    <div class="safe-text">
+                        Based on the provided CPU scheduling
+                        results, SJF has the lowest average
+                        waiting and turnaround time.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <p style="
+                color:#526071;
+                font-size:12px;
+                line-height:1.8;
+            ">
+
+                FCFS is simple and follows process
+                arrival order. Round Robin provides
+                time-sharing and fair CPU access.
+                SJF produces the lowest average waiting
+                and turnaround values in the provided
+                analysis.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Analysis Reports · CPU · Memory · Deadlock · Disk
+    </div>
+
+    `;
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+console.log(
+    "OS Resource Manager initialized successfully."
+);
+
+</script>
+
+</body>
+
+</html>
+```
